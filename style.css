@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #c9b1f1;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.cylinder {
+  width: 80px;
+  height: 200px;
+  background: #111;
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#energy {
+  width: 100%;
+  height: 0;
+  background: red;
+  transition: 0.1s;
+}
+
+button {
+  padding: 15px;
+  border: none;
+  border-radius: 30px;
+  background: #9acd32;
+  font-weight: bold;
+  margin-top: 10px;
+}
