@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convite Clarisse</title>
+  <meta name="theme-color" content="#8c5be9">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --purple:#8c5be9;
+      --pink:#ea79c7;
+      --mint:#59d8c5;
+      --teal:#2baca8;
+      --lime:#b7df37;
+      --navy:#241a55;
+      --text:#6b648f;
+      --line:#eadffd;
+      --card:#fff;
+      --shadow:0 18px 40px rgba(52,26,115,.14);
+    }
+    body {
+      margin:0;
+      font-family:Inter, Arial, sans-serif;
+      color:var(--navy);
+      background:
+        radial-gradient(circle at top left, rgba(183,223,55,.22), transparent 22%),
+        radial-gradient(circle at top right, rgba(89,216,197,.18), transparent 18%),
+        linear-gradient(180deg,#8c5be9 0,#f3ecff 18%,#fbf8ff 18%,#ffffff 100%);
+      overflow-x:hidden;
+    }
+    h1,h2,h3,label,button { font-family:Poppins, Inter, Arial, sans-serif; }
+    .hidden { display:none !important; }
+    .screen {
+      min-height:100svh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px 12px;
+    }
+    .card {
+      width:min(100%, 860px);
+      background:rgba(255,255,255,.96);
+      border-radius:28px;
+      padding:24px 16px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-decor {
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:.9;
+    }
+    .blob1,.blob2,.blob3 {
+      position:absolute;
+      border-radius:999px;
+      filter:blur(2px);
+    }
+    .blob1 { width:150px;height:150px; background:rgba(234,121,199,.18); top:-35px; left:-30px; }
+    .blob2 { width:120px;height:120px; background:rgba(89,216,197,.18); top:12px; right:-20px; }
+    .blob3 { width:110px;height:110px; background:rgba(183,223,55,.18); bottom:-30px; left:45%; }
+    .icon-row {
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      margin-bottom:14px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:1;
+    }
+    .mini-icon {
+      width:40px;height:40px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;font-weight:700;
+      box-shadow:0 8px 18px rgba(52,26,115,.10);
+    }
+    .i1 { background:#fbe1f2; }
+    .i2 { background:#def7f1; }
+    .i3 { background:#eef8d5; }
+    .i4 { background:#efe7ff; }
+    h1 {
+      font-size:clamp(2rem, 6vw, 3.3rem);
+      line-height:1.05;
+      text-align:center;
+      margin:0;
+      position:relative;
+      z-index:1;
+    }
+    .lead {
+      text-align:center;
+      line-height:1.62;
+      color:var(--text);
+      font-size:1rem;
+      max-width:620px;
+      margin:12px auto 0;
+      position:relative;
+      z-index:1;
+    }
+    .btn {
+      width:100%;
+      max-width:360px;
+      display:block;
+      margin:20px auto 0;
+      border:0;
+      border-radius:18px;
+      padding:17px 18px;
+      font-size:1rem;
+      font-weight:700;
+      color:#fff;
+      cursor:pointer;
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      box-shadow:0 12px 24px rgba(140,91,233,.22);
+      position:relative;
+      z-index:1;
+    }
+    .subnote {
+      text-align:center;
+      color:#7b73a1;
+      font-size:.92rem;
+      margin-top:12px;
+      position:relative;
+      z-index:1;
+    }
+
+    #energy-screen {
+      background:
+        radial-gradient(circle at top left, rgba(183,223,55,.12), transparent 24%),
+        radial-gradient(circle at top right, rgba(89,216,197,.12), transparent 22%),
+        linear-gradient(180deg,#3d2678 0%, #221347 100%);
+      color:#fff;
+    }
+    .energy-card {
+      width:min(100%, 860px);
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:28px;
+      padding:24px 16px 28px;
+      box-shadow:0 18px 40px rgba(0,0,0,.20);
+      backdrop-filter: blur(8px);
+      position:relative;
+      overflow:hidden;
+    }
+    .energy-card .mini-icon { box-shadow:none; }
+    .energy-sub {
+      text-align:center;
+      opacity:.86;
+      line-height:1.55;
+      margin:10px auto 14px;
+      max-width:520px;
+    }
+    .tank {
+      position:relative;
+      width:126px;
+      height:282px;
+      margin:8px auto 14px;
+      border-radius:24px;
+      background:#efc218;
+      box-shadow:inset 0 0 0 4px rgba(0,0,0,.08), 0 12px 30px rgba(0,0,0,.24);
+    }
+    .tank-top,.tank-bottom {
+      position:absolute;
+      left:12px;width:calc(100% - 24px);height:16px;border-radius:10px;background:rgba(0,0,0,.22);
+    }
+    .tank-top { top:22px; }
+    .tank-bottom { bottom:22px; }
+    .tank-window {
+      position:absolute;
+      top:62px; bottom:62px; left:36px; right:36px;
+      border-radius:10px;
+      overflow:hidden;
+      background:rgba(24,15,15,.93);
+      border:4px solid #2f2b35;
+      display:flex; align-items:flex-end;
+    }
+    .liquid {
+      width:100%;
+      height:0%;
+      background:linear-gradient(180deg,#ffc6c6 0%, #ff6262 24%, #d90429 100%);
+      transition:height .12s linear;
+    }
+    #msg {
+      text-align:center;
+      color:#fff3ae;
+      font-weight:700;
+      min-height:24px;
+      font-size:1rem;
+    }
+
+    #main {
+      padding:12px 8px 30px;
+    }
+    .invite-wrap {
+      width:min(100%, 980px);
+      margin:0 auto 16px;
+      background:#fff;
+      border-radius:28px;
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+    .invite-frame {
+      width:100%;
+      border-radius:22px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at top left, rgba(183,223,55,.12), transparent 18%),
+        radial-gradient(circle at top right, rgba(89,216,197,.12), transparent 16%),
+        linear-gradient(180deg,#fbf8ff 0,#ffffff 100%);
+      min-height:260px;
+    }
+    .invite-img {
+      width:100%;
+      display:block;
+      height:auto;
+      object-fit:contain;
+    }
+    .image-error {
+      text-align:center;
+      color:#7b73a1;
+      line-height:1.5;
+      font-size:.92rem;
+      padding:18px 10px;
+    }
+
+    .form-card {
+      width:min(100%, 860px);
+      margin:0 auto;
+      background:#fff;
+      border-radius:28px;
+      padding:24px 16px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .section-title {
+      text-align:center;
+      font-size:clamp(1.5rem, 5vw, 2.4rem);
+      margin:0;
+      position:relative;
+      z-index:1;
+    }
+    .section-lead {
+      text-align:center;
+      color:var(--text);
+      line-height:1.58;
+      margin:10px auto 20px;
+      max-width:560px;
+      position:relative;
+      z-index:1;
+    }
+    .field { text-align:left; margin-bottom:14px; position:relative; z-index:1; }
+    label {
+      display:block;
+      margin-bottom:8px;
+      color:#5b547f;
+      font-size:.98rem;
+    }
+    input, textarea {
+      width:100%;
+      border:2px solid var(--line);
+      border-radius:16px;
+      padding:14px 15px;
+      font:inherit;
+      color:var(--navy);
+      background:#fff;
+    }
+    textarea { min-height:96px; resize:vertical; }
+    .choice-row {
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .choice {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      border:2px solid var(--line);
+      border-radius:999px;
+      padding:12px 14px;
+      background:#fff;
+    }
+    .choice input {
+      width:20px;height:20px;margin:0;flex:0 0 20px;
+    }
+    .submit-btn {
+      width:100%;
+      border:0;
+      border-radius:16px;
+      padding:16px;
+      font-size:1rem;
+      font-weight:700;
+      color:#fff;
+      cursor:pointer;
+      background:linear-gradient(135deg,var(--mint),var(--teal));
+      margin-top:4px;
+      position:relative;
+      z-index:1;
+    }
+    #status {
+      min-height:22px;
+      margin-top:12px;
+      color:#5b33b6;
+      font-weight:700;
+      line-height:1.4;
+      text-align:center;
+      position:relative;
+      z-index:1;
+    }
+    .footer {
+      width:min(100%, 860px);
+      margin:0 auto;
+      padding:16px 12px 6px;
+      text-align:center;
+      color:#726a97;
+      line-height:1.55;
+      font-size:.92rem;
+    }
+    @media (min-width: 700px) {
+      .card,.energy-card,.form-card { padding:30px 30px 34px; }
+      .choice-row { flex-direction:row; }
+      .choice { flex:1 1 0; }
+      .invite-wrap { padding:18px; }
+    }
+  </style>
+</head>
+<body>
+  <section id="hero" class="screen">
+    <div class="card">
+      <div class="hero-decor">
+        <div class="blob1"></div><div class="blob2"></div><div class="blob3"></div>
+      </div>
+      <div class="icon-row">
+        <div class="mini-icon i1">🎈</div>
+        <div class="mini-icon i2">👾</div>
+        <div class="mini-icon i3">⭐</div>
+        <div class="mini-icon i4">🎉</div>
+      </div>
+      <h1>Ei, crianças!</h1>
+      <p class="lead">A energia da festa está baixinha...<br>Precisamos de um grito bem forte para abrir o portal do aniversário da Clarisse.</p>
+      <button id="startBtn" class="btn" type="button">Ativar microfone</button>
+      <p class="subnote">Faça bastante barulho para encher o cilindro.</p>
+    </div>
+  </section>
+
+  <section id="energy-screen" class="screen hidden">
+    <div class="energy-card">
+      <div class="icon-row">
+        <div class="mini-icon i1">🎈</div>
+        <div class="mini-icon i2">👾</div>
+        <div class="mini-icon i3">⭐</div>
+        <div class="mini-icon i4">🎉</div>
+      </div>
+      <h2>Carregando energia</h2>
+      <p class="energy-sub">Agora precisa de um barulho mais alto de verdade para abrir o convite.</p>
+      <div class="tank">
+        <div class="tank-top"></div>
+        <div class="tank-window"><div id="liquid" class="liquid"></div></div>
+        <div class="tank-bottom"></div>
+      </div>
+      <p id="msg">Vamos lá...</p>
+    </div>
+  </section>
+
+  <main id="main" class="hidden">
+    <section class="invite-wrap">
+      <div class="invite-frame">
+        <img id="inviteImage" class="invite-img" alt="Convite da Clarisse">
+        <div id="imageError" class="image-error hidden">A imagem do convite não foi encontrada. Deixe o arquivo na mesma pasta com o nome exato <strong>convite-arte.PNG</strong>.</div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="hero-decor">
+        <div class="blob1"></div><div class="blob2"></div><div class="blob3"></div>
+      </div>
+      <div class="icon-row">
+        <div class="mini-icon i1">🎈</div>
+        <div class="mini-icon i2">👾</div>
+        <div class="mini-icon i3">⭐</div>
+        <div class="mini-icon i4">🎉</div>
+      </div>
+      <h2 class="section-title">Confirme sua presença</h2>
+      <p class="section-lead">Preencha abaixo para enviar sua confirmação.</p>
+
+      <form id="form">
+        <div class="field">
+          <label for="nome">Nome do convidado</label>
+          <input id="nome" required>
+        </div>
+
+        <div class="field">
+          <label>Vai comparecer?</label>
+          <div class="choice-row">
+            <label class="choice"><input type="radio" name="presenca" value="Sim" checked><span>Sim</span></label>
+            <label class="choice"><input type="radio" name="presenca" value="Não"><span>Não</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="qtd">Adultos + crianças</label>
+          <input id="qtd" type="number" min="1" value="1" required>
+        </div>
+
+        <div class="field">
+          <label for="telefone">Telefone</label>
+          <input id="telefone" placeholder="(11) 99999-9999">
+        </div>
+
+        <div class="field">
+          <label for="obs">Observações</label>
+          <textarea id="obs" placeholder="Ex.: restrição alimentar, nome das crianças, recado..."></textarea>
+        </div>
+
+        <button class="submit-btn" type="submit">Confirmar presença</button>
+        <div id="status"></div>
+      </form>
+    </section>
+
+    <footer class="footer">
+      <p>Sua presença vai deixar essa festa ainda mais especial!</p>
+      <p><strong>20 de maio de 2026 às 19:00</strong></p>
+      <p>Rua Santinho Gianasi, Vila Conceição – Ribeirão Pires</p>
+    </footer>
+  </main>
+
+  <script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwa8zITKdZIdUqib__t0iIbK0Fe884CG1PwbJk9rFXH-g4KfB4gTM_os1VGsUpgStik/exec";
+    const REPO_NAME = "Monstros-S.A2";
+
+    const hero = document.getElementById("hero");
+    const energyScreen = document.getElementById("energy-screen");
+    const main = document.getElementById("main");
+    const startBtn = document.getElementById("startBtn");
+    const liquid = document.getElementById("liquid");
+    const msg = document.getElementById("msg");
+    const form = document.getElementById("form");
+    const statusEl = document.getElementById("status");
+    const inviteImage = document.getElementById("inviteImage");
+    const imageError = document.getElementById("imageError");
+
+    const imageCandidates = [
+      "convite-arte.PNG",
+      "convite-arte.png",
+      "convite-arte.jpg",
+      "convite-arte.jpeg",
+      `/${REPO_NAME}/convite-arte.PNG`,
+      `/${REPO_NAME}/convite-arte.png`,
+      `/${REPO_NAME}/convite-arte.jpg`,
+      `/${REPO_NAME}/convite-arte.jpeg`
+    ];
+
+    function tryLoadImage(index = 0) {
+      if (index >= imageCandidates.length) {
+        imageError.classList.remove("hidden");
+        return;
+      }
+      inviteImage.onload = () => imageError.classList.add("hidden");
+      inviteImage.onerror = () => tryLoadImage(index + 1);
+      inviteImage.src = imageCandidates[index];
+    }
+    tryLoadImage();
+
+    let level = 0;
+
+    startBtn.addEventListener("click", async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        hero.classList.add("hidden");
+        energyScreen.classList.remove("hidden");
+
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = ctx.createAnalyser();
+        const source = ctx.createMediaStreamSource(stream);
+        source.connect(analyser);
+        analyser.fftSize = 256;
+        const data = new Uint8Array(analyser.frequencyBinCount);
+
+        function animate() {
+          analyser.getByteFrequencyData(data);
+          const avg = data.reduce((a, b) => a + b, 0) / data.length;
+
+          if (avg > 55) {
+            level += 2.3;
+            msg.textContent = "Isso! Mais forte!";
+          } else if (avg > 42) {
+            level += 0.9;
+            msg.textContent = "Está carregando...";
+          } else {
+            level -= 0.16;
+            msg.textContent = "Precisa de um barulho mais alto...";
+          }
+
+          if (level < 0) level = 0;
+          if (level > 100) level = 100;
+
+          liquid.style.height = level + "%";
+
+          if (level >= 100) {
+            stream.getTracks().forEach(track => track.stop());
+            energyScreen.classList.add("hidden");
+            main.classList.remove("hidden");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          } else {
+            requestAnimationFrame(animate);
+          }
+        }
+
+        animate();
+      } catch (e) {
+        alert("Precisamos do microfone para abrir o convite.");
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        action: "submit",
+        evento: "Clarisse - 3 anos",
+        dataEvento: "20/05/2026 19:00",
+        nome: document.getElementById("nome").value.trim(),
+        presenca: document.querySelector('input[name="presenca"]:checked').value,
+        acompanhantes: document.getElementById("qtd").value,
+        telefone: document.getElementById("telefone").value.trim(),
+        observacoes: document.getElementById("obs").value.trim(),
+        enviadoEm: new Date().toISOString()
+      };
+
+      statusEl.textContent = "Enviando confirmação...";
+
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error("Falha");
+        statusEl.textContent = "Presença confirmada com sucesso!";
+        form.reset();
+      } catch (error) {
+        statusEl.textContent = "Não foi possível enviar agora. Tente novamente.";
+      }
+    });
+  </script>
+</body>
+</html>
