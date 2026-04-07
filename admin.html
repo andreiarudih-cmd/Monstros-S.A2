@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel da Anfitriã • Clarisse</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#8c5be9; --pink:#ea79c7; --mint:#59d8c5; --teal:#2baca8; --navy:#241a55; --line:#eadffd; --card:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',sans-serif; color:var(--navy);
+  background:linear-gradient(180deg,#8c5be9 0,#f3ecff 24%,#f8f5ff 100%);
+}
+h1,h2,h3,button,.pill,.stat-label{font-family:'Poppins',sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:22px}
+.card{
+  background:rgba(255,255,255,.95); border-radius:26px; box-shadow:0 18px 42px rgba(52,26,115,.12); padding:22px;
+}
+.topbar{
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between; margin-bottom:18px;
+}
+.topbar h1{font-size:clamp(1.8rem,5vw,2.5rem)}
+.actions{display:flex; gap:12px; flex-wrap:wrap}
+button{
+  border:none; border-radius:16px; padding:14px 18px; cursor:pointer; color:#fff; font-weight:700;
+}
+.primary{background:linear-gradient(135deg,var(--pink),var(--purple))}
+.secondary{background:linear-gradient(135deg,var(--mint),var(--teal))}
+.helper{color:#6f6894; line-height:1.6; margin-top:8px}
+.stats{
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin:18px 0;
+}
+.stat{
+  background:#fff; border:2px solid var(--line); border-radius:22px; padding:18px;
+}
+.stat-number{font-size:2rem; font-weight:800}
+.stat-label{font-size:.95rem; color:#6c6591}
+.filters{
+  display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;
+}
+input,select{
+  border:2px solid var(--line); border-radius:16px; padding:14px 16px; font:inherit; background:#fff;
+}
+#search{flex:1; min-width:220px}
+.table-wrap{overflow:auto; border:2px solid var(--line); border-radius:22px; background:#fff}
+table{width:100%; border-collapse:collapse; min-width:760px}
+th,td{padding:14px 16px; text-align:left; border-bottom:1px solid #f0eaff}
+th{background:#faf7ff; font-family:'Poppins',sans-serif; font-size:.92rem}
+.pill{
+  display:inline-block; padding:8px 12px; border-radius:999px; font-size:.85rem; font-weight:700;
+}
+.sim{background:#e9fbf3; color:#1f9d73}
+.nao{background:#fff0f3; color:#d33b5b}
+.small{font-size:.9rem; color:#6c6591}
+.warning{
+  margin-top:14px; padding:14px 16px; border-radius:18px; background:#f7f2ff; color:#6f6894; line-height:1.6;
+}
+@media (max-width: 800px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="topbar">
+      <div>
+        <h1>Painel da anfitriã</h1>
+        <p class="helper">Lista de convidados atualizada automaticamente. Esta página pode ficar só com você.</p>
+      </div>
+      <div class="actions">
+        <button class="primary" id="refreshBtn" type="button">Atualizar agora</button>
+        <button class="secondary" id="exportBtn" type="button">Exportar CSV</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-number" id="totalCount">0</div><div class="stat-label">Total de respostas</div></div>
+      <div class="stat"><div class="stat-number" id="simCount">0</div><div class="stat-label">Confirmações</div></div>
+      <div class="stat"><div class="stat-number" id="naoCount">0</div><div class="stat-label">Não irão</div></div>
+      <div class="stat"><div class="stat-number" id="pessoasCount">0</div><div class="stat-label">Total de pessoas</div></div>
+    </div>
+
+    <div class="filters">
+      <input id="search" placeholder="Buscar por nome ou telefone">
+      <select id="presenceFilter">
+        <option value="Todos">Todos</option>
+        <option value="Sim">Somente confirmações</option>
+        <option value="Não">Somente não irão</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Enviado em</th>
+            <th>Nome</th>
+            <th>Presença</th>
+            <th>Adultos + crianças</th>
+            <th>Telefone</th>
+            <th>Observações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwa8zITKdZIdUqib__t0iIbK0Fe884CG1PwbJk9rFXH-g4KfB4gTM_os1VGsUpgStik/exec";
+
+const tbody = document.getElementById('tbody');
+const totalCount = document.getElementById('totalCount');
+const simCount = document.getElementById('simCount');
+const naoCount = document.getElementById('naoCount');
+const pessoasCount = document.getElementById('pessoasCount');
+const searchInput = document.getElementById('search');
+const presenceFilter = document.getElementById('presenceFilter');
+const refreshBtn = document.getElementById('refreshBtn');
+const exportBtn = document.getElementById('exportBtn');
+
+let allRows = [];
+
+function escapeHtml(text){
+  return String(text ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+function renderTable(){
+  const q = searchInput.value.trim().toLowerCase();
+  const f = presenceFilter.value;
+
+  const filtered = allRows.filter(row => {
+    const matchesSearch = !q || [row.nome, row.telefone, row.observacoes].join(" ").toLowerCase().includes(q);
+    const matchesPresence = f === "Todos" || row.presenca === f;
+    return matchesSearch && matchesPresence;
+  });
+
+  tbody.innerHTML = filtered.map(row => `
+    <tr>
+      <td class="small">${escapeHtml(row.enviadoEm)}</td>
+      <td>${escapeHtml(row.nome)}</td>
+      <td><span class="pill ${row.presenca === 'Sim' ? 'sim' : 'nao'}">${escapeHtml(row.presenca)}</span></td>
+      <td>${escapeHtml(row.acompanhantes)}</td>
+      <td>${escapeHtml(row.telefone)}</td>
+      <td>${escapeHtml(row.observacoes)}</td>
+    </tr>
+  `).join("");
+
+  totalCount.textContent = filtered.length;
+  simCount.textContent = filtered.filter(r => r.presenca === "Sim").length;
+  naoCount.textContent = filtered.filter(r => r.presenca === "Não").length;
+  pessoasCount.textContent = filtered
+    .filter(r => r.presenca === "Sim")
+    .reduce((acc, r) => acc + (parseInt(r.acompanhantes || "0", 10) || 0), 0);
+}
+
+async function loadData(){
+  try{
+    const response = await fetch(GOOGLE_SCRIPT_URL + "?action=list");
+    const data = await response.json();
+    allRows = Array.isArray(data.rows) ? data.rows : [];
+    renderTable();
+  } catch(error){
+    console.error(error);
+  }
+}
+
+function exportCSV(){
+  const headers = ["Enviado em","Nome","Presença","Adultos + crianças","Telefone","Observações"];
+  const lines = [headers.join(";")].concat(
+    allRows.map(r => [
+      r.enviadoEm || "",
+      r.nome || "",
+      r.presenca || "",
+      r.acompanhantes || "",
+      r.telefone || "",
+      (r.observacoes || "").replaceAll(";", ",")
+    ].join(";"))
+  );
+  const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "confirmacoes-clarisse.csv";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+searchInput.addEventListener('input', renderTable);
+presenceFilter.addEventListener('change', renderTable);
+refreshBtn.addEventListener('click', loadData);
+exportBtn.addEventListener('click', exportCSV);
+
+loadData();
+setInterval(loadData, 15000);
+</script>
+</body>
+</html>
